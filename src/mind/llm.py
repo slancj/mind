@@ -1,3 +1,4 @@
+import json
 import os
 from itertools import cycle
 
@@ -47,3 +48,16 @@ def complete_medium(messages: list) -> str:
 
 def complete_strong(messages: list) -> str:
     return complete(STRONG, messages)
+
+
+def complete_structured(model: ChatLiteLLM, messages: list, schema: dict) -> dict:
+    response = model.invoke(
+        messages,
+        response_mime_type="application/json",
+        response_schema=schema,
+    )
+    return json.loads(extract_text(response))
+
+
+def complete_weak_structured(messages: list, schema: dict) -> dict:
+    return complete_structured(WEAK, messages, schema)
